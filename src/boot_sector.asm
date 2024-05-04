@@ -1,38 +1,33 @@
 org 0x7c00                  ; Declare the address at which the first instruction in this program is located
 
-mov [BOOT_DRIVE], dl        ; BIOS stores boot drive in DL, remember for later
-
-mov bp, 0x8000              ; base of the stack
+mov bp, 0x9000              ; base of the stack
 mov sp, bp                  ; stack pointer
 
-mov bx, 0x9000              ; Load 2 sectors to 0x0000(ES):0x9000(BX) (this is where the data will end up)
-mov dh, 2                   ; from the boot disk
-mov dl, [BOOT_DRIVE]
-call disk_load
+mov di, MSG_REAL_MODE
+call print_string
 
-mov di, [0x9000]            ; Print out the first loaded word
-call print_hex
-
-mov di, [0x9000 + 512]      ; Print first word from second loaded sector
-call print_hex
+call switch_to_pm           ; We never return from here
 
 jmp $                       ; infinite loop
 
-%include "src/print_str.asm"    ; replaces this by the code in print_str.asm
-%include "src/print_hex.asm"
-%include "src/disk_load.asm"
+%include "src/utils/print_str.asm"    ; replaces this by the code in print_str.asm
+%include "src/utils/print_hex.asm"
+;%include "src/utils/disk_load.asm"
+%include "src/gdt.asm"
+%include "src/utils/print_str_pm.asm"
+%include "src/switch_to_pm.asm"
 
-; Global var
-BOOT_DRIVE: db 0
+[bits 32]
+BEGIN_PM:
+    mov ebx, MSG_PROT_MODE
+    call print_string_pm    ; Use 32-bit print routine
+
+    jmp $         ; Infinite loop
 
 ; data
-my_string:
-    db "Hello, dubious world!!!", 0x00   ; Reserve space for a null-ended string
+MSG_REAL_MODE: db "Started in 16-bit Real Mode", 0x00
+MSG_PROT_MODE: db "Succesfully switched to 32-bit Protected Mode", 0x00
 
 ; padding and magic BIOS number
 times 510-($-$$) db 0
 dw 0xaa55
-
-; Extra sectors
-times 256 dw 0xdada
-times 256 dw 0xface
