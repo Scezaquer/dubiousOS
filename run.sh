@@ -5,7 +5,7 @@ while getopts act flag
 do
     case "${flag}" in
         # -a flag assembles the boot sector
-        a) ./assemble.sh ;;
+        a) nasm src/boot_sector.asm -f bin -o build/boot_sector.bin ;;
         # -c flag compiles the kernel
         c) 
             rustc --target x86_64-unknown-none -O --emit obj src/kernel.rs -o build/kernel.o
