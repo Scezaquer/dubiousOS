@@ -14,5 +14,9 @@ print_string:
         jmp loop_print_string
     
     end_print_string:
+        mov al, 0x0d            ; carriage return
+        int 0x10
+        mov al, 0x0a            ; line break
+        int 0x10
         popa
         ret
