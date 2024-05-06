@@ -27,9 +27,9 @@ fn panic(_info: &PanicInfo) -> ! {
 fn main(){
     // Define a mutable raw pointer to video memory location 0xb8000 (top left
     // corner of the screen)
-    let video_mem_ptr: *mut u8 = 0xb8000 as *mut u8;
+    let video_mem_ptr: *mut u16 = 0xb8000 as *mut u16;
 
     // Set the character pointed to X. Unsafe is necessary when dereferencing a
     // raw pointer
-    unsafe{ *video_mem_ptr = b'X'; }
+    unsafe{ core::ptr::write_volatile(video_mem_ptr, 0x1F58); }
 }

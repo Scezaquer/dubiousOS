@@ -1,5 +1,5 @@
 ;32 bits version of the print_string routine (protected mode)
-bits 32
+[bits 32]
 
 ; Constants
 VIDEO_MEMORY equ 0xb8000

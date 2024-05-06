@@ -1,0 +1,8 @@
+00000000  66C7042500800B00  mov word [0xb8000],0x1f58
+         -581F
+0000000A  660F1F440000      nop word [eax+eax+0x0]
+00000010  EBFE              jmp short 0x10
+00000012  662E0F1F84000000  nop word [cs:eax+eax+0x0]
+         -0000
+0000001C  0F1F4000          nop dword [eax+0x0]
+00000020  EBFE              jmp short 0x20

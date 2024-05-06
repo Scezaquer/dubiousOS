@@ -17,25 +17,19 @@ disk_load:
     int 0x13        ; BIOS interrupt
 
     ; error handling
-    jc disk_error1      ; Jump if error
-    pop dx              ; Restore DX from stack
-    cmp dh, al          ; if AL (sectors read) != DH (sectors expected)
-    jne disk_error2     ;   display error message
+    jc disk_error      ; Jump if error
+    pop dx             ; Restore DX from stack
+    cmp dh, al         ; if AL (sectors read) != DH (sectors expected)
+    jne disk_error     ;   display error message
     end_disk_load:
 
     popa
     ret
 
-disk_error1:
+disk_error:
     pop dx              ; Necessary otherwise popa won't pop the right data at the end of disk_load
-    mov di, DISK_ERROR_MSG1
-    call print_string
+    mov di, DISK_ERROR_MSG
+    ;call print_string
     jmp end_disk_load
 
-disk_error2:
-    mov di, DISK_ERROR_MSG2
-    call print_string
-    jmp end_disk_load
-
-DISK_ERROR_MSG1: db "Generic disk read error", 0
-DISK_ERROR_MSG2: db "Disk read warning, AL/DH missmatch", 0
+DISK_ERROR_MSG: db "Disk read error", 0

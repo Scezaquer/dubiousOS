@@ -1,19 +1,39 @@
 #!/bin/bash
 
-# Handle the -a and -c flags
-while getopts act flag
+# Set default values for input and output folders
+INPUT_FOLDER="src"
+OUTPUT_FOLDER="build"
+
+# Parse command line arguments
+for arg in "$@"
 do
-    case "${flag}" in
-        # -a flag assembles the boot sector
-        a) nasm src/boot_sector.asm -f bin -o build/boot_sector.bin ;;
-        # -c flag compiles the kernel
-        c) 
-            rustc --target x86_64-unknown-none -O --emit obj src/kernel.rs -o build/kernel.o
-            ld -o build/kernel.bin -Ttext 0x1000 build/kernel.o --oformat binary;;
-        # -t flag concatenates the boot sector and kernel
-        t)
-            cat build/boot_sector.bin build/kernel.bin > build/os-image
+    case "${arg}" in
+        -a)
+            ASSEMBLE=true ;;
+        -c)
+            COMPILE=true ;;
+        -t)
+            CONCATENATE=true ;;
+        input=*)
+            INPUT_FOLDER="${arg#*=}" ;;
+        output=*)
+            OUTPUT_FOLDER="${arg#*=}" ;;
     esac
 done
-# run the cpu emulator with the kernel image we made
-qemu-system-x86_64 -drive format=raw,file=build/os-image
+
+# Handle flags based on parsed arguments
+if [ "$ASSEMBLE" = true ]; then
+    nasm "${INPUT_FOLDER}/boot_sector.asm" -f bin -o "${OUTPUT_FOLDER}/boot_sector.bin"
+fi
+
+if [ "$COMPILE" = true ]; then
+    rustc --target x86_64-unknown-none -O --emit obj "${INPUT_FOLDER}/kernel.rs" -o "${OUTPUT_FOLDER}/kernel.o"
+    ld -o "${OUTPUT_FOLDER}/kernel.bin" -Ttext 0x1000 "${OUTPUT_FOLDER}/kernel.o" --oformat binary
+fi
+
+if [ "$CONCATENATE" = true ]; then
+    cat "${OUTPUT_FOLDER}/boot_sector.bin" "${OUTPUT_FOLDER}/kernel.bin" > "${OUTPUT_FOLDER}/os-image"
+fi
+
+# Run the CPU emulator with the kernel image
+qemu-system-x86_64 -drive format=raw,file="${OUTPUT_FOLDER}/os-image"
