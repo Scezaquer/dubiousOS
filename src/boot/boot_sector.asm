@@ -14,12 +14,12 @@ jmp $                       ; infinite loop
 
 ;%include "src/utils/print_str.asm"    ; replaces this by the code in print_str.asm
 ;%include "src/utils/print_hex.asm"
-%include "src/utils/disk_load.asm"
-%include "src/gdt.asm"
-%include "src/utils/print_str_pm.asm"
-%include "src/switch_to_pm.asm"
-%include "src/switch_to_long_mode.asm"
-%include "src/gdt64.asm"
+%include "src/boot/utils/disk_load.asm"
+%include "src/boot/gdt.asm"
+%include "src/boot/utils/print_str_pm.asm"
+%include "src/boot/switch_to_pm.asm"
+%include "src/boot/switch_to_long_mode.asm"
+%include "src/boot/gdt64.asm"
 
 [bits 16]
 load_kernel:
