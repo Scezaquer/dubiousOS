@@ -1,5 +1,5 @@
 org 0x7c00                  ; Declare the address at which the first instruction in this program is located
-KERNEL_OFFSET equ 0xa000
+KERNEL_OFFSET equ 0xa000    ; TODO: pick a sensible address
 
 mov [BOOT_DRIVE], dl
 
@@ -12,14 +12,14 @@ call switch_to_pm           ; We never return from here
 
 jmp $                       ; infinite loop
 
-;%include "src/long_mode/utils/print_str.asm"    ; replaces this by the code in print_str.asm
-;%include "src/long_mode/utils/print_hex.asm"
-%include "src/long_mode/utils/disk_load.asm"
-%include "src/long_mode/gdt.asm"
-%include "src/long_mode/utils/print_str_pm.asm"
-%include "src/long_mode/switch_to_pm.asm"
-%include "src/long_mode/switch_to_long_mode.asm"
-%include "src/long_mode/gdt64.asm"
+;%include "src/utils/print_str.asm"    ; replaces this by the code in print_str.asm
+;%include "src/utils/print_hex.asm"
+%include "src/utils/disk_load.asm"
+%include "src/gdt.asm"
+%include "src/utils/print_str_pm.asm"
+%include "src/switch_to_pm.asm"
+%include "src/switch_to_long_mode.asm"
+%include "src/gdt64.asm"
 
 [bits 16]
 load_kernel:
@@ -66,12 +66,7 @@ Realm64:
     mov ecx, 497
     rep stosq
 
-    ; target remote :1234
-    ; break *0x7dcd
-
     jmp KERNEL_OFFSET
-
-    ; jmp 0x7e00
     
     hlt                           ; Halt the processor.
 
