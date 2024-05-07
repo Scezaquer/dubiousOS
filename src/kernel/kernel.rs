@@ -5,10 +5,12 @@ use core::panic::PanicInfo;
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    // Initialization code goes here
-    // This is where you would set up your environment, initialize hardware, etc.
 
-    // Call your previous main function
+    ///////////// ENTRY POINT OF THE KERNEL /////////////
+
+    // Initialization code goes here
+    // set up environment, initialize hardware, etc.
+
     main();
 
     // This function should not return, so we use an infinite loop
@@ -28,16 +30,15 @@ fn main(){
     // corner of the screen)
     let mut video_mem_ptr: *mut u16 = 0xb8000 as *mut u16;
 
-    // Set the character pointed to X. Unsafe is necessary when dereferencing a
-    // raw pointer
+    // Print a message on screen to signal the kernel loaded successfully
     let kernel_load_msg = "DubiousOS Kernel loaded successfully in 64-bit long mode";
-    let char_params: u16 = 0x0F00 as u16;
+    let char_params: u16 = 0x0F00 as u16;   // White text on black background
 
     for byte in kernel_load_msg.bytes(){
+        // We write directly to video memory, which is unsafe
         unsafe{ 
             core::ptr::write_volatile(video_mem_ptr, char_params | byte as u16);
             video_mem_ptr = video_mem_ptr.offset(1);
         }
     }
-    
 }
