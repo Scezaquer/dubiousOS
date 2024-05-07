@@ -1,4 +1,5 @@
 ; takes di as the adress of the null-ended string to print
+; this code only works in 16 bit real mode
 
 print_string:
     pusha
