@@ -1,5 +1,3 @@
-#![no_std]
-
 // Define the disk driver struct
 pub struct DiskDriver {
     // Add your disk driver fields here

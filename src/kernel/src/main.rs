@@ -5,7 +5,7 @@ use crate::screen_output::print::print_str;
 use crate::screen_output::print::clear_screen;
 mod screen_output;
 
-extern crate drivers;
+//extern crate drivers;
 use core::panic::PanicInfo;
 
 #[no_mangle]

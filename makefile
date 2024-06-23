@@ -22,10 +22,12 @@ build/kernel.bin: ${KERNEL_OBJ}
 build/kernel/%.o: src/kernel/%.rs $(wildcard src/kernel/**/*.rs) build/drivers
 	mkdir -p build/kernel/src
 	rustc --extern drivers=build/drivers/libdisk.rlib --target x86_64-unknown-none -O --emit obj $< -o $@
+	# cd src/kernel && CARGO_TARGET_DIR=../../build/kernel cargo +nightly rustc -- --extern drivers=../../build/drivers/release/libdrivers.rlib --emit=obj
 
 build/drivers: ${DRIVERS_SOURCES} $(wildcard src/drivers/**/*.rs)
 	mkdir -p build/drivers
-	rustc --crate-type=lib --target x86_64-unknown-none --out-dir build/drivers $<
+	# rustc --crate-type=lib --target x86_64-unknown-none --out-dir build/drivers $<
+	CARGO_TARGET_DIR=build/drivers cargo +nightly build --manifest-path src/drivers/Cargo.toml --release
 
 clean :
 	rm -rf build/*

@@ -11,6 +11,8 @@ pub fn clear_screen(){
             video_mem_ptr = video_mem_ptr.offset(1);
         }
     }
+
+    //set_cursor_position(0, 0);
 }
 
 pub fn print_str(s: &str){
@@ -26,3 +28,14 @@ pub fn print_str(s: &str){
         }
     }
 }
+
+/*pub fn set_cursor_position(row: u8, col: u8) {
+    let position: u16 = (row as u16) * 80 + (col as u16);
+
+    unsafe {
+        x86::io::outb(0x3D4, 0x0F);
+        x86::io::outb(0x3D5, (position & 0xFF) as u8);
+        x86::io::outb(0x3D4, 0x0E);
+        x86::io::outb(0x3D5, ((position >> 8) & 0xFF) as u8);
+    }
+}*/
