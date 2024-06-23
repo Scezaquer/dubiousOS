@@ -48,8 +48,5 @@ switch_to_long_mode:
 
     ; we're now in compatibility mode
 
-    ;mov ebx, MSG_LONG_MODE
-    ;call print_string_pm    ; Use 32-bit print routine
-
     lgdt [GDT.Pointer]         ; Load the 64-bit global descriptor table.
     jmp GDT.Code:Realm64       ; Set the code segment and enter 64-bit long mode.

@@ -1,5 +1,6 @@
 org 0x7c00                  ; Declare the address at which the first instruction in this program is located
-KERNEL_OFFSET equ 0xa000    ; TODO: pick a sensible address
+KERNEL_OFFSET equ 0x0
+KERNEL_OFFSET2 equ 0x1000   ; kernel will be placed at 0x10000 (es:bx)
 
 mov [BOOT_DRIVE], dl
 
@@ -23,10 +24,14 @@ jmp $                       ; infinite loop
 
 [bits 16]
 load_kernel:
+    mov ax, KERNEL_OFFSET2
+    mov es, ax
     mov bx, KERNEL_OFFSET   ; Setting up params for the disk-loading routine
     mov dh, 15              ; We load the first 15 sectors (excluding boot)
     mov dl, [BOOT_DRIVE]    ; from the boot disk to address KERNEL_OFFSET
     call disk_load
+    mov ax, 0x0
+    mov es, ax
 
     ret
 
@@ -44,7 +49,7 @@ BEGIN_PM:
 [bits 64]
 Realm64:
     cli                           ; Clear the interrupt flag.
-    mov ax, GDT.Data            ; Set the A-register to the data descriptor.
+    mov ax, GDT.Data              ; Set the A-register to the data descriptor.
     mov ds, ax                    ; Set the data segment to the A-register.
     mov es, ax                    ; Set the extra segment to the A-register.
     mov fs, ax                    ; Set the F-segment to the A-register.
@@ -61,12 +66,17 @@ Realm64:
     mov [edi+16], rax
 
     ; Clear the screen.
-    mov rax, 0x0f200f200f200f20
-    mov edi, 0xB8018
-    mov ecx, 497
-    rep stosq
+    ;mov rax, 0x0f200f200f200f20
+    ;mov edi, 0xB8018
+    ;mov ecx, 497
+    ;rep stosq
 
-    jmp KERNEL_OFFSET
+    ; jump to the kernel address
+    xor rax, rax
+    mov rax, KERNEL_OFFSET2
+    shl rax, 4
+    add rax, KERNEL_OFFSET
+    jmp rax
     
     hlt                           ; Halt the processor.
 

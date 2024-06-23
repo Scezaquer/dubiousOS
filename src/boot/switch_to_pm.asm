@@ -21,7 +21,7 @@ init_pm:
     mov fs, ax
     mov gs, ax
 
-    mov ebp, 0x90000    ; Update stack position to be at the top of the free space
+    mov ebp, 0xf0000    ; Update stack position
     mov esp, ebp        ; 
 
     call BEGIN_PM

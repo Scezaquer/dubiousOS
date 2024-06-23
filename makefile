@@ -1,5 +1,5 @@
 # Define the source directories
-RUST_SOURCES := $(wildcard src/kernel/*.rs) $(wildcard src/drivers/*.rs)
+RUST_SOURCES := $(wildcard src/kernel/src/*.rs) $(wildcard src/drivers/src/*.rs)
 
 # Define the object files with the build directory
 OBJ := $(patsubst src/%.rs, build/%.o, $(RUST_SOURCES))
@@ -18,8 +18,14 @@ build/boot_sector.bin: src/boot/*.asm src/boot/utils/*.asm
 build/kernel.bin: ${OBJ}
 	ld -o $@ -Ttext 0x1000 $^ --oformat binary
 
-build/%.o: src/%.rs
+build/%.o: src/%.rs $(wildcard src/kernel/**/*.rs) build/kernel/src build/drivers/src
 	rustc --target x86_64-unknown-none -O --emit obj $< -o $@
 
+build/kernel/src:
+	mkdir -p build/kernel/src
+
+build/drivers/src:
+	mkdir -p build/drivers/src
+
 clean :
-	rm -rf build/*.bin build/*.dis build/*.o build/os-image build/*.map
+	rm -rf build/*
