@@ -5,6 +5,10 @@ use crate::screen_output::print::print_str;
 use crate::screen_output::print::clear_screen;
 mod screen_output;
 
+mod memory_management;
+
+// use x86_64::instructions::hlt; // TODO: remove
+
 //extern crate drivers;
 use core::panic::PanicInfo;
 

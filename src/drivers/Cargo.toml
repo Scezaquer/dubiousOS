@@ -1,6 +1,10 @@
 [package]
 name = "drivers"
 version = "0.1.0"
-edition = "2018"
+edition = "2021"
+
+[lib]
+name = "drivers"
+path = "src/lib.rs"
 
 [dependencies]

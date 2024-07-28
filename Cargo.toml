@@ -1,0 +1,11 @@
+[workspace]
+members = [
+    "src/kernel",
+    "src/drivers"
+]
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
