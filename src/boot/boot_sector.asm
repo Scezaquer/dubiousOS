@@ -71,6 +71,12 @@ Realm64:
     ;mov ecx, 497
     ;rep stosq
 
+    ;*0x7dc5
+    mov rax, 0x10000       ; Kernel entry point address in long mode
+    jmp rax                ; Jump to the 64-bit kernel entry point
+
+    hlt                    ; Halt the processor.
+
     ; jump to the kernel address
     xor rax, rax
     mov rax, KERNEL_OFFSET2
