@@ -5,18 +5,24 @@ SECTIONS {
 
     .text : {
         *(.text._start)
-        *(.text .text.*)
+        *(.text*)        /* Text/code section */
     }
 
-    .rodata : {
-        *(.rodata .rodata.*)
+    .rodata :
+    {
+        *(.rodata*)      /* Read-only data */
     }
 
-    .data : {
-        *(.data .data.*)
+    .data :
+    {
+        *(.data*)        /* Initialized data */
     }
 
-    .bss : {
-        *(.bss .bss.*)
+    .bss :
+    {
+        *(.bss*)         /* Uninitialized data */
+        *(COMMON)
     }
+
+    /DISCARD/ : { *(.eh_frame*) *(.debug*) }
 }

@@ -1,7 +1,8 @@
 # Paths and files
 BUILD_DIR := build
-BOOT_ASM := src/boot/boot_sector.asm
+BOOT_ASM := src/boot/*.asm
 UTILS_ASM := src/boot/utils/*.asm
+KERNEL_SRC := $(shell find src -name '*.rs')
 BOOT_BIN := $(BUILD_DIR)/boot_sector.bin
 KERNEL_BIN := $(BUILD_DIR)/kernel.bin
 OS_IMAGE := $(BUILD_DIR)/os-image
@@ -21,11 +22,12 @@ $(BOOT_BIN): $(BOOT_ASM) $(UTILS_ASM)
 	RUSTFLAGS=-Wl,--verbose $(NASM) $(NASMFLAGS) "src/boot/boot_sector.asm" -o "$(BOOT_BIN)"
 
 # Compile kernel sources using Cargo
-$(KERNEL_BIN):
+$(KERNEL_BIN): $(KERNEL_SRC)
 	@mkdir -p $(BUILD_DIR)
 	$(CARGO) +nightly rustc --target x86_64-unknown-none.json --release -- -C link-arg=-c
 	ar x target/x86_64-unknown-none/release/libdubiousOS.a --output target/x86_64-unknown-none/release/
 	ld.lld -m elf_x86_64 -Tlinker.ld -o $(KERNEL_BIN) target/x86_64-unknown-none/release/*.o
+	strip --strip-all $(KERNEL_BIN)
 #cp target/x86_64-unknown-none/release/libdubiousOS.a $(KERNEL_BIN)
 # $(CARGO) build --target x86_64-unknown-none.json --release
 
@@ -48,6 +50,10 @@ $(OS_IMAGE): $(BOOT_BIN) $(KERNEL_BIN)
 .PHONY: run
 run: $(OS_IMAGE)
 	qemu-system-x86_64 -drive format=raw,file="$(OS_IMAGE)"
+
+.PHONY: debug
+debug: $(OS_IMAGE)
+	qemu-system-x86_64 -s -S -drive format=raw,file="$(OS_IMAGE)"
 
 # Clean the build directory and Cargo output
 .PHONY: clean

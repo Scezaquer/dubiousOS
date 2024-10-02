@@ -76,6 +76,7 @@ fn allocate(size: usize) -> *mut u8 {
     */
 
     // If no suitable block of memory is found, return a null pointer
+    // Todo: this is terrible and should return an Option
     core::ptr::null_mut()
 }
 

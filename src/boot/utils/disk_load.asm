@@ -12,7 +12,6 @@ disk_load:
     mov al, dh      ; read dh sectors from the start point
     mov ch, 0x00    ; select cylinder 0
     mov dh, 0x00    ; select head 0
-    mov cl, 0x02    ; start reading from second sector (i.e. after boot sector)
 
     int 0x13        ; BIOS interrupt
 
@@ -30,6 +29,7 @@ disk_error:
     pop dx              ; Necessary otherwise popa won't pop the right data at the end of disk_load
     mov di, DISK_ERROR_MSG
     ;call print_string
+    jmp $
     jmp end_disk_load
 
 DISK_ERROR_MSG: db "Disk read error", 0

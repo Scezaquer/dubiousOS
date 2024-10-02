@@ -31,6 +31,16 @@ switch_to_long_mode:
         add edi, 8                   ; Add eight to the destination index.
         loop .SetEntry               ; Set the next entry.
 
+    ; Setup recursive paging: the PML4 has an entry pointing to itself, meaning
+    ; this table can be accessed through the virtual adresses
+    ; 0xFFFFFFFFFFFFF000 + 0x0000 → PML4
+    ; 0xFFFFFFFFFF800000 + 0x0000 → PDPT
+    ; 0xFFFFFFFFC0000000 + 0x0000 → Page Directory
+    ; 0xFFFFFFFFA0000000 + 0x0000 → Page Table
+    ;mov rax, cr3                        ; Get the physical address of the PML4 from CR3.
+    ;or rax, 0x03                        ; Set the flags (present, read/write).
+    ;mov [rax + 0xFF8], rax              ; Set the last entry in the PML4 to point to itself (recursive entry).
+
     ; set the LM-bit
     mov eax, cr4                 ; Set the A-register to control register 4.
     or eax, 1 << 5               ; Set the PAE-bit, which is the 6th bit (bit 5).
